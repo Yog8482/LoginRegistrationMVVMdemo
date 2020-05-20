@@ -1,0 +1,27 @@
+package com.loginmvvm.demo.data;
+
+import com.loginmvvm.demo.data.model.NewUser;
+
+public class NewUserRepository {
+
+    private static volatile NewUserRepository newuserRepo_instance;
+    private DataSource dataSource;
+
+    private NewUserRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public static NewUserRepository getInstance(DataSource dataSource) {
+        if (newuserRepo_instance == null) {
+            newuserRepo_instance = new NewUserRepository(dataSource);
+        }
+        return newuserRepo_instance;
+    }
+
+
+    public Result<NewUser> createNewUser(NewUser new_user) {
+        // handle
+       return  dataSource.createUser(new_user);
+
+    }
+}

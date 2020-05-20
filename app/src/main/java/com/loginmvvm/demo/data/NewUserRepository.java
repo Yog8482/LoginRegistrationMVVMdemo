@@ -1,5 +1,7 @@
 package com.loginmvvm.demo.data;
 
+import androidx.lifecycle.LiveData;
+
 import com.loginmvvm.demo.data.model.NewUser;
 
 public class NewUserRepository {
@@ -19,7 +21,7 @@ public class NewUserRepository {
     }
 
 
-    public Result<NewUser> createNewUser(NewUser new_user) {
+    public LiveData<Result> createNewUser(NewUser new_user) {
         // handle
        return  dataSource.createUser(new_user);
 

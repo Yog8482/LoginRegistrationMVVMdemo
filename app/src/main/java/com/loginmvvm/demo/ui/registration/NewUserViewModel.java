@@ -45,9 +45,9 @@ public class NewUserViewModel extends ViewModel {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        Result<NewUser> result = newUserRepository.createNewUser(user);
+        LiveData<Result> result = newUserRepository.createNewUser(user);
 
-        if (result instanceof Result.Success) {
+        if (result.getValue() instanceof Result.Success) {
 //            NewUser data = ((Result.Success<NewUser>) result).getData();
             newUserResult.setValue(new NewUserResult(true));
         } else {

@@ -1,5 +1,8 @@
 package com.loginmvvm.demo.data;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loginmvvm.demo.data.model.LoggedInUser;
@@ -8,6 +11,9 @@ import com.loginmvvm.demo.data.model.NewUser;
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
@@ -33,60 +39,45 @@ public class DataSource {
 
     private FetchDataService serviceApi = retrofit.create(FetchDataService.class);
 
-    public Result<NewUser> createUser(NewUser user) {
-        try {
-            // TODO: handle loggedInUser authentication
-//            LoggedInUser fakeUser =
-//                    new LoggedInUser(
-//                            java.util.UUID.randomUUID().toString(),
-//                            "Yog B");
-//            return new Result.Success<>(fakeUser);
-            Result result = serviceApi.registerUser(user);
-            if (result instanceof Result.Success)
-                return (Result<NewUser>) ((Result.Success) result).getData();
-            else
-                return new Result.Error(((Result.Error) result).getError());
+    public LiveData<Result> createUser(NewUser user) {
 
-        } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
-        }
+        final MutableLiveData<Result> data = new MutableLiveData<>();
 
-        /*Call<LiveData<UserRegistrationForm>> call = serviceApi.registerUser(user);
+        serviceApi.registerUser(user)
+                .enqueue(new Callback<Result>() {
+                    @Override
+                    public void onResponse(Call<Result> call, Response<Result> response) {
+                        data.postValue(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Result> call, Throwable t) {
+                        data.postValue(new Result.Error(new Exception(t.getMessage())));
+
+                    }
+                });
 
 
-        call.enqueue(new Callback<LiveData<UserRegistrationForm>>() {
-            @Override
-            public void onResponse(Call<LiveData<UserRegistrationForm>> call, Response<LiveData<UserRegistrationForm>> response) {
-
-                //finally we are setting the list to our MutableLiveData
-
-            }
-
-            @Override
-            public void onFailure(Call<LiveData<UserRegistrationForm>> call, Throwable t) {
-
-            }
-        });*/
+        return data;
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public LiveData<Result> login(String username, String password) {
+        final MutableLiveData<Result> data = new MutableLiveData<>();
+        serviceApi.login(username, password)
+                .enqueue(new Callback<Result>() {
+                    @Override
+                    public void onResponse(Call<Result> call, Response<Result> response) {
+                        data.setValue(response.body());
+                    }
 
-        try {
-            // TODO: handle loggedInUser authentication
-//            LoggedInUser fakeUser =
-//                    new LoggedInUser(
-//                            java.util.UUID.randomUUID().toString(),
-//                            "Yog B");
-//            return new Result.Success<>(fakeUser);
-            Result result = serviceApi.login(username, password);
-            if (result instanceof Result.Success)
-                return (Result<LoggedInUser>) ((Result.Success) result).getData();
-            else
-                return new Result.Error(((Result.Error) result).getError());
+                    @Override
+                    public void onFailure(Call<Result> call, Throwable t) {
+                        data.setValue(new Result.Error(new Exception(t.getMessage())));
 
-        } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
-        }
+                    }
+                });
+        return data;
+
     }
 
 
@@ -103,11 +94,11 @@ interface FetchDataService {
      */
 
     @GET("register")
-    Result registerUser(@Query("new_user") NewUser new_user);
+    Call<Result> registerUser(@Query("new_user") NewUser new_user);
 
     @GET("login")
-    Result login(@Query("username") String username,
-                 @Query("password") String password);
+    Call<Result> login(@Query("username") String username,
+                       @Query("password") String password);
 
 //    @GET("register")
 //    Call<LiveData<UserRegistrationForm>> registerUser(@Query("new_user") UserRegistrationForm new_user);

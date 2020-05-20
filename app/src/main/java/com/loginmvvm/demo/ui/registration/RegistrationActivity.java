@@ -28,9 +28,6 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        newUserViewModel = new ViewModelProvider(this, new NewUserViewModelFactory())
-                .get(NewUserViewModel.class);
-
 
         final TextView gotologin = findViewById(R.id.txtSigninLink);
 
@@ -42,9 +39,12 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText pincodeEditText = findViewById(R.id.txtPincode);
         final EditText passwordEditText = findViewById(R.id.txtPassword);
         final EditText confPasswordEditText = findViewById(R.id.txtConfirmPassword);
-        registrationProgressBar = findViewById(R.id.spinner);
+        registrationProgressBar = (ProgressBar) findViewById(R.id.spinner);
 
         final Button signupButton = findViewById(R.id.btnSignup);
+
+        newUserViewModel = new ViewModelProvider(this, new NewUserViewModelFactory())
+                .get(NewUserViewModel.class);
 
         gotologin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +76,8 @@ public class RegistrationActivity extends AppCompatActivity {
                     registrationProgressBar.setVisibility(View.VISIBLE);
                 else
                     registrationProgressBar.setVisibility(View.GONE);
+                boolean isvisible = registrationProgressBar.getVisibility() == View.VISIBLE;
+                Toast.makeText(getApplicationContext(), "progress bar is visible: " + isvisible, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -106,7 +108,6 @@ public class RegistrationActivity extends AppCompatActivity {
         newUserViewModel.getNewUserResult().observe(this, new Observer<NewUserResult>() {
             @Override
             public void onChanged(NewUserResult newUserResult) {
-
                 if (newUserResult == null) {
                     return;
                 }

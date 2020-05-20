@@ -1,5 +1,7 @@
 package com.loginmvvm.demo.data;
 
+import androidx.lifecycle.LiveData;
+
 import com.loginmvvm.demo.data.model.LoggedInUser;
 
 /**
@@ -45,10 +47,10 @@ public class LoginRepository {
 
     public Result<LoggedInUser> login(String username, String password) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+        LiveData<Result> result = dataSource.login(username, password);
+        if (result.getValue() instanceof Result.Success) {
+            setLoggedInUser(((Result.Success<LoggedInUser>) result.getValue()).getData());
         }
-        return result;
+        return result.getValue();
     }
 }

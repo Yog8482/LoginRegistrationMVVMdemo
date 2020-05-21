@@ -14,7 +14,7 @@ public class NewUserResult {
         this.error = error;
     }
 
-    NewUserResult(@Nullable boolean success) {
+    public NewUserResult(@Nullable boolean success) {
         this.success = success;
     }
 

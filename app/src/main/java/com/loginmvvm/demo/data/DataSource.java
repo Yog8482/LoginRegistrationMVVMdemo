@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loginmvvm.demo.data.model.LoggedInUser;
 import com.loginmvvm.demo.data.model.NewUser;
+import com.loginmvvm.demo.ui.registration.NewUserResult;
 
 import java.io.IOException;
 
@@ -45,20 +46,22 @@ public class DataSource {
     public LiveData<Result> createUser(final NewUser user) {
 
         final MutableLiveData<Result> data = new MutableLiveData<>();
+        //Mock result
+        data.setValue(new Result.Success(new NewUserResult(true)));
 
-        serviceApi.registerUser(user)
-                .enqueue(new Callback<Result>() {
-                    @Override
-                    public void onResponse(Call<Result> call, Response<Result> response) {
-                        data.setValue(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<Result> call, Throwable t) {
-                        data.setValue(new Result.Error(new Exception(t.getMessage())));
-
-                    }
-                });
+//        serviceApi.registerUser(user)
+//                .enqueue(new Callback<Result>() {
+//                    @Override
+//                    public void onResponse(Call<Result> call, Response<Result> response) {
+//                        data.setValue(response.body());
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<Result> call, Throwable t) {
+//                        data.setValue(new Result.Error(new Exception(t.getMessage())));
+//
+//                    }
+//                });
 
 
         return data;

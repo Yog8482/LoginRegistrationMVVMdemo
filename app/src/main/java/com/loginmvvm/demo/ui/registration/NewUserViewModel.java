@@ -16,14 +16,6 @@ import com.loginmvvm.demo.data.model.NewUser;
     private MutableLiveData<Result> newUserResult = new MutableLiveData<>();
     private NewUserRepository newUserRepository;
 
-    private MutableLiveData<Boolean> _spinner = new MutableLiveData<>(true);
-
-    /**
-     * Show Loading spinner if true
-     */
-    LiveData<Boolean> spinner = _spinner;
-
-
     NewUserViewModel(NewUserRepository newUserRepository) {
         this.newUserRepository = newUserRepository;
 
@@ -39,9 +31,7 @@ import com.loginmvvm.demo.data.model.NewUser;
 
      void createNewUser(NewUser user) {
 
-        _spinner.setValue(true);
         newUserResult.setValue(newUserRepository.createNewUser(user).getValue());
-        _spinner.setValue(false);
 
     }
 

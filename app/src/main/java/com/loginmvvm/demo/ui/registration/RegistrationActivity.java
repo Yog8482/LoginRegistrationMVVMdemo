@@ -41,6 +41,7 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText passwordEditText = findViewById(R.id.txtPassword);
         final EditText confPasswordEditText = findViewById(R.id.txtConfirmPassword);
         registrationProgressBar = (ProgressBar) findViewById(R.id.spinner);
+        registrationProgressBar.bringToFront();
 
         final Button signupButton = findViewById(R.id.btnSignup);
 
@@ -57,6 +58,8 @@ public class RegistrationActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                registrationProgressBar.setVisibility(View.VISIBLE);
+
                 NewUser newUser = new NewUser(nameEditText.getText().toString(), emailEditText.getText().toString(),
                         mobileEditText.getText().toString(), passwordEditText.getText().toString(),
                         addressEditText.getText().toString(), pincodeEditText.getText().toString(),
@@ -69,32 +72,21 @@ public class RegistrationActivity extends AppCompatActivity {
         });
 
         // show the spinner when [spinner] is true
-        newUserViewModel.spinner.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean showLoading) {
-                if (showLoading)
-                    registrationProgressBar.setVisibility(View.VISIBLE);
-                else
-                    registrationProgressBar.setVisibility(View.GONE);
+
+        newUserViewModel.getNewUserResult().observe(this, newUserResult -> {
+            if (newUserResult == null) {
+                return;
             }
-        });
+            if (newUserResult instanceof Result.Success) {
+//                NewUser data = ((Result.Success<NewUser>) newUserResult).getData();
+                updateUiWithUser(R.string.registration_success);
 
-        newUserViewModel.getNewUserResult().observe(this, new Observer<Result>() {
-            @Override
-            public void onChanged(Result newUserResult) {
-                if (newUserResult == null) {
-                    return;
-                }
-                if (newUserResult instanceof Result.Success) {
-                    NewUser data = ((Result.Success<NewUser>) newUserResult).getData();
-                    updateUiWithUser(R.string.registration_success);
-
-                } else {
-                    showLoginFailed(R.string.login_failed);
-
-                }
-
+            } else {
+                showLoginFailed(R.string.login_failed);
             }
+
+            registrationProgressBar.setVisibility(View.GONE);
+
         });
         newUserViewModel.getNewUserFormState().observe(this, new Observer<NewUserFormState>() {
             @Override

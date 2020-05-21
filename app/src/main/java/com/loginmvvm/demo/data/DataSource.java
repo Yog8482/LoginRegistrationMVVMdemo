@@ -1,5 +1,8 @@
 package com.loginmvvm.demo.data;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -39,7 +42,7 @@ public class DataSource {
 
     private FetchDataService serviceApi = retrofit.create(FetchDataService.class);
 
-    public LiveData<Result> createUser(NewUser user) {
+    public LiveData<Result> createUser(final NewUser user) {
 
         final MutableLiveData<Result> data = new MutableLiveData<>();
 
@@ -47,12 +50,12 @@ public class DataSource {
                 .enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
-                        data.postValue(response.body());
+                        data.setValue(response.body());
                     }
 
                     @Override
                     public void onFailure(Call<Result> call, Throwable t) {
-                        data.postValue(new Result.Error(new Exception(t.getMessage())));
+                        data.setValue(new Result.Error(new Exception(t.getMessage())));
 
                     }
                 });

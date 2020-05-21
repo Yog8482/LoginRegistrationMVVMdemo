@@ -13,7 +13,7 @@ import com.loginmvvm.demo.data.model.NewUser;
 
 public class NewUserViewModel extends ViewModel {
     private MutableLiveData<NewUserFormState> newUserFormState = new MutableLiveData<>();
-    private MutableLiveData<NewUserResult> newUserResult = new MutableLiveData<>();
+    private MutableLiveData<Result> newUserResult = new MutableLiveData<>();
     private NewUserRepository newUserRepository;
 
     private MutableLiveData<Boolean> _spinner = new MutableLiveData<Boolean>(false);
@@ -26,33 +26,21 @@ public class NewUserViewModel extends ViewModel {
 
     NewUserViewModel(NewUserRepository newUserRepository) {
         this.newUserRepository = newUserRepository;
+
     }
 
     LiveData<NewUserFormState> getNewUserFormState() {
         return newUserFormState;
     }
 
-    LiveData<NewUserResult> getNewUserResult() {
+    LiveData<Result> getNewUserResult() {
         return newUserResult;
     }
 
     public void createNewUser(NewUser user) {
-        // can be launched in a separate asynchronous job
 
         _spinner.setValue(true);
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        LiveData<Result> result = newUserRepository.createNewUser(user);
-
-        if (result.getValue() instanceof Result.Success) {
-//            NewUser data = ((Result.Success<NewUser>) result).getData();
-            newUserResult.setValue(new NewUserResult(true));
-        } else {
-            newUserResult.setValue(new NewUserResult(R.string.registration_failed));
-        }
+        newUserResult.setValue(newUserRepository.createNewUser(user).getValue());
         _spinner.setValue(false);
 
     }

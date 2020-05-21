@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loginmvvm.demo.R;
+import com.loginmvvm.demo.data.Result;
 import com.loginmvvm.demo.data.model.NewUser;
 
 
@@ -56,14 +57,13 @@ public class RegistrationActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 NewUser newUser = new NewUser(nameEditText.getText().toString(), emailEditText.getText().toString(),
                         mobileEditText.getText().toString(), passwordEditText.getText().toString(),
                         addressEditText.getText().toString(), pincodeEditText.getText().toString(),
                         cityEditText.getText().toString());
 
-
                 newUserViewModel.createNewUser(newUser);
+
 
             }
         });
@@ -76,12 +76,26 @@ public class RegistrationActivity extends AppCompatActivity {
                     registrationProgressBar.setVisibility(View.VISIBLE);
                 else
                     registrationProgressBar.setVisibility(View.GONE);
-                boolean isvisible = registrationProgressBar.getVisibility() == View.VISIBLE;
-                Toast.makeText(getApplicationContext(), "progress bar is visible: " + isvisible, Toast.LENGTH_LONG).show();
             }
         });
 
+        newUserViewModel.getNewUserResult().observe(this, new Observer<Result>() {
+            @Override
+            public void onChanged(Result newUserResult) {
+                if (newUserResult == null) {
+                    return;
+                }
+                if (newUserResult instanceof Result.Success) {
+                    NewUser data = ((Result.Success<NewUser>) newUserResult).getData();
+                    updateUiWithUser(R.string.registration_success);
 
+                } else {
+                    showLoginFailed(R.string.login_failed);
+
+                }
+
+            }
+        });
         newUserViewModel.getNewUserFormState().observe(this, new Observer<NewUserFormState>() {
             @Override
             public void onChanged(NewUserFormState newUserFormState) {
@@ -104,26 +118,6 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
-
-        newUserViewModel.getNewUserResult().observe(this, new Observer<NewUserResult>() {
-            @Override
-            public void onChanged(NewUserResult newUserResult) {
-                if (newUserResult == null) {
-                    return;
-                }
-                if (newUserResult.getError() != null) {
-                    showLoginFailed(newUserResult.getError());
-                }
-                if (newUserResult.getSuccess()) {
-                    updateUiWithUser(R.string.registration_success);
-                    finish();
-
-                }
-//                setResult(Activity.RESULT_OK);
-
-
-            }
-        });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override

@@ -40,7 +40,7 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText pincodeEditText = findViewById(R.id.txtPincode);
         final EditText passwordEditText = findViewById(R.id.txtPassword);
         final EditText confPasswordEditText = findViewById(R.id.txtConfirmPassword);
-        registrationProgressBar = (ProgressBar) findViewById(R.id.spinner);
+        registrationProgressBar =  findViewById(R.id.spinner);
         registrationProgressBar.bringToFront();
 
         final Button signupButton = findViewById(R.id.btnSignup);
@@ -48,27 +48,19 @@ public class RegistrationActivity extends AppCompatActivity {
         newUserViewModel = new ViewModelProvider(this, new NewUserViewModelFactory())
                 .get(NewUserViewModel.class);
 
-        gotologin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        gotologin.setOnClickListener(v -> finish());
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registrationProgressBar.setVisibility(View.VISIBLE);
+        signupButton.setOnClickListener(v -> {
+            registrationProgressBar.setVisibility(View.VISIBLE);
 
-                NewUser newUser = new NewUser(nameEditText.getText().toString(), emailEditText.getText().toString(),
-                        mobileEditText.getText().toString(), passwordEditText.getText().toString(),
-                        addressEditText.getText().toString(), pincodeEditText.getText().toString(),
-                        cityEditText.getText().toString());
+            NewUser newUser = new NewUser(nameEditText.getText().toString(), emailEditText.getText().toString(),
+                    mobileEditText.getText().toString(), passwordEditText.getText().toString(),
+                    addressEditText.getText().toString(), pincodeEditText.getText().toString(),
+                    cityEditText.getText().toString());
 
-                newUserViewModel.createNewUser(newUser);
+            newUserViewModel.createNewUser(newUser);
 
 
-            }
         });
 
         // show the spinner when [spinner] is true
@@ -79,10 +71,10 @@ public class RegistrationActivity extends AppCompatActivity {
             }
             if (newUserResult instanceof Result.Success) {
 //                NewUser data = ((Result.Success<NewUser>) newUserResult).getData();
-                updateUiWithUser(R.string.registration_success);
+                showSignupSuccess(R.string.registration_success);
 
             } else {
-                showLoginFailed(R.string.login_failed);
+                showSignupFailed(R.string.registration_failed);
             }
 
             registrationProgressBar.setVisibility(View.GONE);
@@ -136,13 +128,14 @@ public class RegistrationActivity extends AppCompatActivity {
         confPasswordEditText.addTextChangedListener(afterTextChangedListener);
     }
 
-    private void updateUiWithUser(@StringRes Integer successString) {
+    private void showSignupSuccess(@StringRes Integer successString) {
         String welcome = getString(successString);
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        finish();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
+    private void showSignupFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }

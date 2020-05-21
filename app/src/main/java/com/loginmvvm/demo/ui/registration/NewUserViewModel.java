@@ -11,12 +11,12 @@ import com.loginmvvm.demo.data.NewUserRepository;
 import com.loginmvvm.demo.data.Result;
 import com.loginmvvm.demo.data.model.NewUser;
 
-public class NewUserViewModel extends ViewModel {
+ class NewUserViewModel extends ViewModel {
     private MutableLiveData<NewUserFormState> newUserFormState = new MutableLiveData<>();
     private MutableLiveData<Result> newUserResult = new MutableLiveData<>();
     private NewUserRepository newUserRepository;
 
-    private MutableLiveData<Boolean> _spinner = new MutableLiveData<Boolean>(false);
+    private MutableLiveData<Boolean> _spinner = new MutableLiveData<>(true);
 
     /**
      * Show Loading spinner if true
@@ -37,7 +37,7 @@ public class NewUserViewModel extends ViewModel {
         return newUserResult;
     }
 
-    public void createNewUser(NewUser user) {
+     void createNewUser(NewUser user) {
 
         _spinner.setValue(true);
         newUserResult.setValue(newUserRepository.createNewUser(user).getValue());
@@ -45,7 +45,7 @@ public class NewUserViewModel extends ViewModel {
 
     }
 
-    public void newUserDataChanged(String name, String email, String password, String conf_password) {
+     void newUserDataChanged(String name, String email, String password, String conf_password) {
         if (!isNameValid(name)) {
             newUserFormState.setValue(new NewUserFormState(R.string.invalid_fullname, null,null,null));
         } else if (!isEmailValid(email)) {

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 
 import com.loginmvvm.demo.data.model.LoggedInUser;
 
+import retrofit2.Call;
+
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
@@ -45,12 +47,9 @@ public class LoginRepository {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Call<Result> login(String username, String password) {
         // handle login
-        LiveData<Result> result = dataSource.login(username, password);
-        if (result.getValue() instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result.getValue()).getData());
-        }
-        return result.getValue();
+        return dataSource.login(username, password);
+
     }
 }

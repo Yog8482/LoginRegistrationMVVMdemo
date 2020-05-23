@@ -29,7 +29,7 @@ import retrofit2.http.Query;
 public class DataSource {
 
 
-    static final String BASE_URL = "https://getsandbox.com/";
+    static final String BASE_URL = "http://www.mocky.io/v2/";
 
     private Gson gson = new GsonBuilder()
             .setLenient()
@@ -43,47 +43,14 @@ public class DataSource {
 
     private FetchDataService serviceApi = retrofit.create(FetchDataService.class);
 
-    public LiveData<Result> createUser(final NewUser user) {
+    public Call<Result> createUser(NewUser user) {
 
-        final MutableLiveData<Result> data = new MutableLiveData<>();
-        //Mock result
-        data.setValue(new Result.Success(new NewUserResult(true)));
+       return serviceApi.registerUser(user);
 
-//        serviceApi.registerUser(user)
-//                .enqueue(new Callback<Result>() {
-//                    @Override
-//                    public void onResponse(Call<Result> call, Response<Result> response) {
-//                        data.setValue(response.body());
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<Result> call, Throwable t) {
-//                        data.setValue(new Result.Error(new Exception(t.getMessage())));
-//
-//                    }
-//                });
-
-
-        return data;
     }
 
-    public LiveData<Result> login(String username, String password) {
-        final MutableLiveData<Result> data = new MutableLiveData<>();
-        serviceApi.login(username, password)
-                .enqueue(new Callback<Result>() {
-                    @Override
-                    public void onResponse(Call<Result> call, Response<Result> response) {
-                        data.setValue(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<Result> call, Throwable t) {
-                        data.setValue(new Result.Error(new Exception(t.getMessage())));
-
-                    }
-                });
-        return data;
-
+    public Call<Result> login(String username, String password) {
+      return serviceApi.login(username, password);
     }
 
 
@@ -99,10 +66,10 @@ interface FetchDataService {
      * Create user or register api call.Here we assume all possible errors and exceptions are handled by server and we received response.
      */
 
-    @GET("register")
+    @GET("5ec7d8972f0000660b427536")
     Call<Result> registerUser(@Query("new_user") NewUser new_user);
 
-    @GET("login")
+    @GET("5ec7d8972f0000660b427536")
     Call<Result> login(@Query("username") String username,
                        @Query("password") String password);
 

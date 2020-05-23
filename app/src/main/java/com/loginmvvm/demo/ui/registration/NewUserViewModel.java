@@ -11,7 +11,11 @@ import com.loginmvvm.demo.data.NewUserRepository;
 import com.loginmvvm.demo.data.Result;
 import com.loginmvvm.demo.data.model.NewUser;
 
- class NewUserViewModel extends ViewModel {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+class NewUserViewModel extends ViewModel {
     private MutableLiveData<NewUserFormState> newUserFormState = new MutableLiveData<>();
     private MutableLiveData<Result> newUserResult = new MutableLiveData<>();
     private NewUserRepository newUserRepository;
@@ -31,7 +35,22 @@ import com.loginmvvm.demo.data.model.NewUser;
 
      void createNewUser(NewUser user) {
 
-        newUserResult.setValue(newUserRepository.createNewUser(user).getValue());
+         newUserRepository.createNewUser(user)
+                 .enqueue(new Callback<Result>() {
+                     @Override
+                     public void onResponse(Call<Result> call, Response<Result> response) {
+                         newUserResult.setValue(response.body());
+
+                     }
+
+                     @Override
+                     public void onFailure(Call<Result> call, Throwable t) {
+
+                         newUserResult.setValue(new Result.Error(new Exception(t.getMessage())));
+
+                     }
+                 });
+
 
     }
 

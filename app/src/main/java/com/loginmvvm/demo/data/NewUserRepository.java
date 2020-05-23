@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 
 import com.loginmvvm.demo.data.model.NewUser;
 
+import retrofit2.Call;
+
 public class NewUserRepository {
 
     private static volatile NewUserRepository newuserRepo_instance;
@@ -21,7 +23,7 @@ public class NewUserRepository {
     }
 
 
-    public LiveData<Result> createNewUser(NewUser new_user) {
+    public Call<Result> createNewUser(NewUser new_user) {
         // handle
        return  dataSource.createUser(new_user);
 

@@ -11,6 +11,10 @@ import com.loginmvvm.demo.data.Result;
 import com.loginmvvm.demo.data.model.LoggedInUser;
 import com.loginmvvm.demo.R;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
@@ -31,14 +35,25 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        loginRepository.login(username, password).enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+                Result result=response.body();
+                if (result instanceof Result.Success) {
+                    LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
+                    loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+                } else {
+                    loginResult.setValue(new LoginResult(R.string.login_failed));
+                }
+            }
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+                loginResult.setValue(new LoginResult(R.string.login_failed));
+            }
+        });
+
+
     }
 
     public void loginDataChanged(String username, String password) {
